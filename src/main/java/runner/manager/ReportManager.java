@@ -20,7 +20,7 @@ import java.time.format.DateTimeFormatter;
 public class ReportManager {
     private static ExtentReports extent;
     private static ThreadLocal<ExtentTest> test = new ThreadLocal<>();
-    private static WebDriver driver;
+    private static ThreadLocal<WebDriver> driver = new ThreadLocal<>();
     private static final String REPORT_DIRECTORY = "test-reports";
 
     public static void initReports(String testSuiteName) {
@@ -60,7 +60,7 @@ public class ReportManager {
     }
 
     public static void setWebDriver(WebDriver webDriver) {
-        driver = webDriver;
+        driver.set(webDriver);
     }
 
     public static void startTest(String testName) {
@@ -86,13 +86,13 @@ public class ReportManager {
     }
 
     public static String takeScreenshot(String screenshotName) {
-        if (driver == null) {
+        if (driver.get() == null) {
             log(Status.WARNING, "Ekran görüntüsü alınamadı: WebDriver örneği bulunamadı.");
             return null;
         }
 
         try {
-            TakesScreenshot ts = (TakesScreenshot) driver;
+            TakesScreenshot ts = (TakesScreenshot) driver.get();
             File source = ts.getScreenshotAs(OutputType.FILE);
 
             // Ekran görüntüsü dizinini oluştur

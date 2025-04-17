@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 public class TestStep {
+    public String name;
     public String action;
     public Target target;
     public String value;
@@ -24,6 +25,10 @@ public class TestStep {
     public String windowTitleOrUrl; // Pencere başlığı veya URL'si
     public String alertAction;      // alert aksiyonu: accept, dismiss, sendKeys
     public String key;              // Klavye tuşu aksiyonları için
+
+    public String getName() {
+        return this.name;
+    }
 
     public static class Target {
         public String by;

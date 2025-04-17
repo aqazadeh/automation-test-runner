@@ -27,6 +27,66 @@ This project provides a declarative approach to web test automation. Instead of 
 1. Clone the repository
 2. Build the project with Maven:
 
+```
+mvn clean install
+```
+
+### Running Tests
+
+You can run tests either sequentially or in parallel.
+
+#### Sequential Execution
+
+To run a single test scenario:
+
+```
+java -jar target/json-selenium-runner-1.0-SNAPSHOT.jar
+```
+
+By default, it will run the scenario at `scenarios/full-selenium-demo.json`.
+
+To specify a different scenario:
+
+```
+java -jar target/json-selenium-runner-1.0-SNAPSHOT.jar -scenarios path/to/your/scenario.json
+```
+
+You can specify multiple scenarios:
+
+```
+java -jar target/json-selenium-runner-1.0-SNAPSHOT.jar -scenarios scenario1.json -scenarios scenario2.json
+```
+
+To run all scenarios in a directory:
+
+```
+java -jar target/json-selenium-runner-1.0-SNAPSHOT.jar -scenarioDir path/to/scenarios/directory
+```
+
+#### Parallel Execution
+
+To run tests in parallel:
+
+```
+java -jar target/json-selenium-runner-1.0-SNAPSHOT.jar -parallel
+```
+
+By default, it will use the number of available processors as the thread count. You can specify a custom thread count:
+
+```
+java -jar target/json-selenium-runner-1.0-SNAPSHOT.jar -parallel 4
+```
+
+You can combine parallel execution with scenario options:
+
+```
+java -jar target/json-selenium-runner-1.0-SNAPSHOT.jar -parallel 4 -scenarioDir path/to/scenarios/directory
+```
+
+```
+java -jar target/json-selenium-runner-1.0-SNAPSHOT.jar -parallel 4 -scenarios scenario1.json -scenarios scenario2.json
+```
+
 ## Creating Test Steps
 
 Test steps are defined in JSON format and represent actions to be performed during test execution. Each step is a JSON object with properties that define what action to perform and how.

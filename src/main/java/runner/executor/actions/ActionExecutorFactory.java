@@ -43,17 +43,13 @@ public class ActionExecutorFactory {
     public void executeStep(TestStep step) {
         try {
             // Log step start
-            ReportManager.logStep(Status.INFO, step.getAction(),
-                    "Hedef: " + (step.getTarget() != null ? step.getTarget() : "N/A") + 
-                    ", Değer: " + (step.getValue() != null ? step.getValue() : "N/A"));
-            
-            System.out.println("Action: " + step.getAction());
-            System.out.println("Selector: " + (step.getTarget() != null ? step.getTarget() : "N/A"));
-            System.out.println("Value: " + (step.getValue() != null ? step.getValue() : "N/A"));
+            ReportManager.logStep(Status.INFO, step.getName(),
+                    "Target: " + (step.getTarget() != null ? step.getTarget() : "N/A") +
+                    ", Value: " + (step.getValue() != null ? step.getValue() : "N/A"));
             
             // Check condition
             if (step.getCondition() != null && !checkCondition(step.getCondition())) {
-                ReportManager.logStep(Status.SKIP, "Atlanan adım",
+                ReportManager.logStep(Status.SKIP, "Skipped step",
                         "Koşul sağlanmadığı için adım atlandı: " + step.getAction());
                 return;
             }

@@ -34,40 +34,37 @@ public class BasicActionExecutor extends ActionExecutorBase {
         switch (step.getAction()) {
             case "navigate" -> {
                 driver.get(step.getUrl());
-                ReportManager.logStep(Status.PASS, "Sayfa Aç", "URL: " + step.getUrl());
+//                ReportManager.logStep(Status.PASS, "Open Page", "URL: " + step.getUrl());
             }
             case "click" -> {
                 find(step).click();
-                ReportManager.logStep(Status.PASS, "Tıkla", "Elemana tıklandı");
+//                ReportManager.logStep(Status.PASS, "Click", "Clicked the element");
             }
             case "type" -> {
                 find(step).sendKeys(step.getValue());
-                ReportManager.logStep(Status.PASS, "Yazı Yaz", "Değer: " + step.getValue());
+//                ReportManager.logStep(Status.PASS, "Typed", "Value: " + step.getValue());
             }
             case "clear" -> {
                 find(step).clear();
-                ReportManager.logStep(Status.PASS, "Temizle", "Eleman temizlendi");
+//                ReportManager.logStep(Status.PASS, "Clear", "Element is cleared");
             }
             case "selectOption" -> {
                 WebElement el = find(step);
                 new Select(el).selectByVisibleText(step.getValue());
-                ReportManager.logStep(Status.PASS, "Seçim Yap", "Seçilen değer: " + step.getValue());
+//                ReportManager.logStep(Status.PASS, "Choose choice", "Selected value: " + step.getValue());
             }
             case "waitFor" -> {
                 getWait(step.getTimeout()).until(ExpectedConditions.visibilityOfElementLocated(getBy(step.getTarget())));
-                ReportManager.logStep(Status.PASS, "Bekle",
-                        "Eleman için " + (step.getTimeout() != null ? step.getTimeout() : 10) + " saniye beklendi");
+//                ReportManager.logStep(Status.PASS, "Wait", "Eleman için " + (step.getTimeout() != null ? step.getTimeout() : 10) + " saniye beklendi");
             }
             case "assertText" -> {
                 String actual = find(step).getText();
                 if (!actual.contains(step.getValue())) {
-                    ReportManager.logStep(Status.FAIL, "Metin Kontrolü",
-                            "Beklenen: " + step.getValue() + ", Bulunan: " + actual);
+//                    ReportManager.logStep(Status.FAIL, "Metin Kontrolü", "Beklenen: " + step.getValue() + ", Bulunan: " + actual);
                     ReportManager.attachScreenshot("AssertionFail");
                     throw new AssertionError("Expected text: " + step.getValue() + ", but found: " + actual);
                 }
-                ReportManager.logStep(Status.PASS, "Metin Kontrolü",
-                        "Metin doğrulama başarılı: " + step.getValue());
+//                ReportManager.logStep(Status.PASS, "Metin Kontrolü", "Metin doğrulama başarılı: " + step.getValue());
             }
             case "screenshot" -> {
                 try {

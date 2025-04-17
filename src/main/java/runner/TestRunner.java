@@ -9,17 +9,77 @@ import runner.model.TestStep;
 import runner.executor.ActionExecutor;
 
 import java.io.File;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class TestRunner {
     public static void main(String[] args) throws Exception {
+        boolean parallelExecution = false;
+        int threadCount = Runtime.getRuntime().availableProcessors();
+        List<String> scenarioPaths = new ArrayList<>();
+
+        // Parse command line arguments
+        for (int i = 0; i < args.length; i++) {
+            if ("-parallel".equals(args[i])) {
+                parallelExecution = true;
+                if (i + 1 < args.length && !args[i + 1].startsWith("-")) {
+                    try {
+                        threadCount = Integer.parseInt(args[i + 1]);
+                        i++;
+                    } catch (NumberFormatException e) {
+                        // Use default thread count
+                    }
+                }
+            } else if ("-scenarios".equals(args[i])) {
+                if (i + 1 < args.length && !args[i + 1].startsWith("-")) {
+                    scenarioPaths.add(args[i + 1]);
+                    i++;
+                }
+            } else if ("-scenarioDir".equals(args[i])) {
+                if (i + 1 < args.length && !args[i + 1].startsWith("-")) {
+                    String dirPath = args[i + 1];
+                    try {
+                        List<String> files = Files.list(Paths.get(dirPath))
+                                .filter(p -> p.toString().endsWith(".json"))
+                                .map(Path::toString)
+                                .collect(Collectors.toList());
+                        scenarioPaths.addAll(files);
+                    } catch (Exception e) {
+                        System.err.println("Error reading scenario directory: " + e.getMessage());
+                    }
+                    i++;
+                }
+            }
+        }
+
+        // If no scenarios specified, use default
+        if (scenarioPaths.isEmpty()) {
+            scenarioPaths.add("scenarios/full-selenium-demo.json");
+        }
+
+        // Run tests in parallel or sequentially
+        if (parallelExecution) {
+            System.out.println("Running tests in parallel with " + threadCount + " threads");
+            System.out.println("Scenarios: " + scenarioPaths);
+            ParallelTestRunner runner = new ParallelTestRunner(threadCount, scenarioPaths);
+            runner.runTests();
+        } else {
+            // Run tests sequentially
+            for (String scenarioPath : scenarioPaths) {
+                runSingleTest(scenarioPath);
+            }
+        }
+    }
+
+    private static void runSingleTest(String scenarioPath) throws Exception {
         // Raporlama başlat
-        String scenarioPath = "scenarios/full-selenium-demo.json";
         Path path = Paths.get(scenarioPath);
         String testName = path.getFileName().toString().replace(".json", "");
 
