@@ -6,7 +6,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import runner.manager.ReportManager;
 import runner.model.TestStep;
-import runner.util.ActionExecutor;
+import runner.executor.ActionExecutor;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -45,9 +45,6 @@ public class TestRunner {
 
             WebDriver driver = new ChromeDriver();
             ReportManager.setWebDriver(driver);
-
-            // Test başlangıç URL'si
-            driver.get("https://www.selenium.dev/selenium/web/web-form.html");
             ReportManager.log(Status.INFO, "Test başlatılıyor.");
 
             ActionExecutor executor = new ActionExecutor(driver);

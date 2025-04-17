@@ -1,4 +1,4 @@
-package runner.util.actions;
+package runner.executor.actions;
 
 import com.aventstack.extentreports.Status;
 import org.openqa.selenium.WebDriver;

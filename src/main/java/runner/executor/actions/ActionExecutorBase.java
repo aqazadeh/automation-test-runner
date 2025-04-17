@@ -1,4 +1,4 @@
-package runner.util.actions;
+package runner.executor.actions;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
