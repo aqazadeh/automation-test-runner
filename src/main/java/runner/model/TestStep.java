@@ -1,6 +1,7 @@
 package runner.model;
 
 import java.util.List;
+import java.util.Map;
 
 public class TestStep {
     public String action;
@@ -12,15 +13,37 @@ public class TestStep {
     public Condition condition;
     public List<TestStep> steps;
     public Integer times;
+    // Yeni alanlar
+    public Target sourceTarget;     // Sürükle bırak için kaynak hedef
+    public Target destinationTarget; // Sürükle bırak için varış hedefi
+    public String attribute;        // getAttribute için özellik adı
+    public String script;           // JavaScript kodu çalıştırmak için
+    public Map<String, Object> scriptArgs; // JavaScript argümanları
+    public String frameIdentifier;  // frame ID, name veya index
+    public String windowHandle;     // Pencere tanımlayıcısı
+    public String windowTitleOrUrl; // Pencere başlığı veya URL'si
+    public String alertAction;      // alert aksiyonu: accept, dismiss, sendKeys
+    public String key;              // Klavye tuşu aksiyonları için
 
     public static class Target {
         public String by;
         public String value;
+
+        @Override
+        public String toString() {
+            return "Target{by='" + by + "', value='" + value + "'}";
+        }
     }
 
     public static class Condition {
         public Target target;
         public String type;
+        public String jsCondition; // JavaScript şartı
+
+        @Override
+        public String toString() {
+            return "Condition{target=" + target + ", type='" + type + "', jsCondition='" + jsCondition + "'}";
+        }
     }
 
     public String getAction() {
@@ -95,6 +118,86 @@ public class TestStep {
         this.times = times;
     }
 
+    public Target getSourceTarget() {
+        return sourceTarget;
+    }
+
+    public void setSourceTarget(Target sourceTarget) {
+        this.sourceTarget = sourceTarget;
+    }
+
+    public Target getDestinationTarget() {
+        return destinationTarget;
+    }
+
+    public void setDestinationTarget(Target destinationTarget) {
+        this.destinationTarget = destinationTarget;
+    }
+
+    public String getAttribute() {
+        return attribute;
+    }
+
+    public void setAttribute(String attribute) {
+        this.attribute = attribute;
+    }
+
+    public String getScript() {
+        return script;
+    }
+
+    public void setScript(String script) {
+        this.script = script;
+    }
+
+    public Map<String, Object> getScriptArgs() {
+        return scriptArgs;
+    }
+
+    public void setScriptArgs(Map<String, Object> scriptArgs) {
+        this.scriptArgs = scriptArgs;
+    }
+
+    public String getFrameIdentifier() {
+        return frameIdentifier;
+    }
+
+    public void setFrameIdentifier(String frameIdentifier) {
+        this.frameIdentifier = frameIdentifier;
+    }
+
+    public String getWindowHandle() {
+        return windowHandle;
+    }
+
+    public void setWindowHandle(String windowHandle) {
+        this.windowHandle = windowHandle;
+    }
+
+    public String getWindowTitleOrUrl() {
+        return windowTitleOrUrl;
+    }
+
+    public void setWindowTitleOrUrl(String windowTitleOrUrl) {
+        this.windowTitleOrUrl = windowTitleOrUrl;
+    }
+
+    public String getAlertAction() {
+        return alertAction;
+    }
+
+    public void setAlertAction(String alertAction) {
+        this.alertAction = alertAction;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+
     @Override
     public String toString() {
         return "TestStep{" +
@@ -107,6 +210,14 @@ public class TestStep {
                 ", condition=" + condition +
                 ", steps=" + steps +
                 ", times=" + times +
+                ", sourceTarget=" + sourceTarget +
+                ", destinationTarget=" + destinationTarget +
+                ", attribute='" + attribute + '\'' +
+                ", script='" + script + '\'' +
+                ", frameIdentifier='" + frameIdentifier + '\'' +
+                ", windowHandle='" + windowHandle + '\'' +
+                ", alertAction='" + alertAction + '\'' +
+                ", key='" + key + '\'' +
                 '}';
     }
 }
