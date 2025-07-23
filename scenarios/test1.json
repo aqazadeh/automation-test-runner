@@ -1,0 +1,65 @@
+[
+  {
+    "name": "Navigate to url",
+    "action": "NAVIGATE",
+    "url": "https://www.saucedemo.com"
+  },
+  {
+    "action": "CLICK",
+    "name": "Click on input with id \"user-name\"",
+    "target": {
+      "by": "id",
+      "value": "user-name"
+    }
+  },
+  {
+    "action": "SEND_VALUE",
+    "name": "Enter text in input with id \"user-name\"",
+    "target": {
+      "by": "id",
+      "value": "user-name"
+    },
+    "value": "standard_user"
+  },
+  {
+    "action": "CLICK",
+    "name": "Click on div with class \"login_password\"",
+    "target": {
+      "by": "className",
+      "value": "login_password"
+    }
+  },
+  {
+    "action": "CLICK",
+    "name": "Click on div with class \"login_password\"",
+    "target": {
+      "by": "className",
+      "value": "login_password"
+    }
+  },
+  {
+    "action": "CLICK",
+    "name": "Click on input with id \"password\"",
+    "target": {
+      "by": "id",
+      "value": "password"
+    }
+  },
+  {
+    "action": "SEND_VALUE",
+    "name": "Enter text in input with id \"password\"",
+    "target": {
+      "by": "id",
+      "value": "password"
+    },
+    "value": "secret_sauce"
+  },
+  {
+    "action": "CLICK",
+    "name": "Click on input with id \"login-button\"",
+    "target": {
+      "by": "id",
+      "value": "login-button"
+    }
+  }
+]

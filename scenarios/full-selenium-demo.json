@@ -1,24 +1,32 @@
 [
   {
     "name": "Navigate to url",
-    "action": "navigate",
+    "action": "NAVIGATE",
     "url": "https://www.saucedemo.com"
   },
   {
+    "name": "Check is page Loaded",
+    "action": "CONDITION",
+    "target": { "by": "className", "value": "login_logo" },
+    "type": "VISIBLE",
+    "value": true,
+    "timeout": 3
+  },
+  {
     "name": "Enter the username",
-    "action": "type",
+    "action": "SEND_VALUE",
     "target": { "by": "id", "value": "user-name" },
     "value": "standard_user"
   },
   {
     "name": "Enter the password",
-    "action": "type",
+    "action": "SEND_VALUE",
     "target": { "by": "id", "value": "password" },
     "value": "secret_sauce"
   },
   {
     "name": "Click to login button",
-    "action": "click",
+    "action": "CLICK",
     "target": { "by": "id", "value": "login-button" }
   }
 ]

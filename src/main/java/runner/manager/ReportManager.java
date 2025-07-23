@@ -34,7 +34,7 @@ public class ReportManager {
 
             // ExtentReports nesnesini yapılandır
             ExtentSparkReporter reporter = new ExtentSparkReporter(reportPath);
-            reporter.config().setDocumentTitle("Test Otomasyonu Raporu");
+            reporter.config().setDocumentTitle("Test Automation Report");
             reporter.config().setReportName(testSuiteName);
             reporter.config().setTheme(Theme.STANDARD);
             reporter.config().setEncoding("utf-8");
@@ -42,9 +42,9 @@ public class ReportManager {
             // ExtentReports'u başlat
             extent = new ExtentReports();
             extent.attachReporter(reporter);
-            extent.setSystemInfo("İşletim Sistemi", System.getProperty("os.name"));
-            extent.setSystemInfo("Java Sürümü", System.getProperty("java.version"));
-            extent.setSystemInfo("Test Senaryosu", testSuiteName);
+            extent.setSystemInfo("Operation System", System.getProperty("os.name"));
+            extent.setSystemInfo("Java version", System.getProperty("java.version"));
+            extent.setSystemInfo("Test scenario", testSuiteName);
         }
     }
 
@@ -54,7 +54,7 @@ public class ReportManager {
             try {
                 Files.createDirectories(dirPath);
             } catch (IOException e) {
-                System.err.println("Rapor dizini oluşturulamadı: " + e.getMessage());
+                System.err.println("Failed to create report directory: " + e.getMessage());
             }
         }
     }
@@ -87,7 +87,7 @@ public class ReportManager {
 
     public static String takeScreenshot(String screenshotName) {
         if (driver.get() == null) {
-            log(Status.WARNING, "Ekran görüntüsü alınamadı: WebDriver örneği bulunamadı.");
+            log(Status.WARNING, "Failed to capture screenshot: WebDriver instance not found.");
             return null;
         }
 
@@ -111,7 +111,7 @@ public class ReportManager {
             // Göreceli yolu döndür
             return "screenshots/" + fileName;
         } catch (Exception e) {
-            log(Status.WARNING, "Ekran görüntüsü alınamadı: " + e.getMessage());
+            log(Status.WARNING, "Could not take screenshot: " + e.getMessage());
             return null;
         }
     }

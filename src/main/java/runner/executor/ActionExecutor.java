@@ -1,35 +1,29 @@
 package runner.executor;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import runner.manager.ReportManager;
-import runner.model.TestStep;
-import runner.executor.actions.ActionExecutorFactory;
+import org.openqa.selenium.WebElement;
+import runner.model.Target;
 
-/**
- * Main action executor class that delegates test step execution to specialized executors.
- * This class uses the Factory pattern to route execution requests to the appropriate
- * specialized action executor.
- */
-public class ActionExecutor {
+public abstract class ActionExecutor<T>{
 
-    private final WebDriver driver;
-    private final ActionExecutorFactory executorFactory;
-
-    /**
-     * Creates a new ActionExecutor with the specified WebDriver
-     * @param driver The WebDriver instance to use
-     */
-    public ActionExecutor(WebDriver driver) {
-        this.driver = driver;
-        this.executorFactory = new ActionExecutorFactory(driver);
-        ReportManager.setWebDriver(driver);
+    protected WebElement find(WebDriver driver, Target target) {
+        return driver.findElement(getBy(target));
     }
 
-    /**
-     * Executes a test step by delegating to the appropriate specialized executor
-     * @param step The test step to execute
-     */
-    public void execute(TestStep step) {
-        executorFactory.executeStep(step);
+    protected By getBy(Target target) {
+        return switch (target.by) {
+            case "id" -> By.id(target.value);
+            case "name" -> By.name(target.value);
+            case "css" -> By.cssSelector(target.value);
+            case "xpath" -> By.xpath(target.value);
+            case "className" -> By.className(target.value);
+            case "tagName" -> By.tagName(target.value);
+            case "linkText" -> By.linkText(target.value);
+            case "partialLinkText" -> By.partialLinkText(target.value);
+            default -> throw new IllegalArgumentException("Unknown locator: " + target.by);
+        };
     }
+
+    public abstract void execute(WebDriver driver, T step);
 }
