@@ -5,11 +5,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.*;
 import runner.executor.ActionExecutor;
 import runner.model.step.TestStep;
+import runner.observer.TestExecutionEvent;
+import runner.observer.TestExecutionEventPublisher;
+import runner.strategy.ExecutionContext;
 
 import java.util.List;
 
 @Slf4j
 public class ScenarioManager {
+    
+    private static final TestExecutionEventPublisher eventPublisher = new TestExecutionEventPublisher();
     
     public static class StepExecutionException extends RuntimeException {
         private final TestStep failedStep;
@@ -25,25 +30,52 @@ public class ScenarioManager {
         public int getStepIndex() { return stepIndex; }
     }
     
+    /**
+     * Get the event publisher for registering observers
+     */
+    public static TestExecutionEventPublisher getEventPublisher() {
+        return eventPublisher;
+    }
+    
     public static void start(WebDriver driver, List<TestStep> steps) {
+        ExecutionContext context = ExecutionContext.createConfigured();
+        start(driver, steps, context);
+    }
+    
+    public static void start(WebDriver driver, List<TestStep> steps, ExecutionContext executionContext) {
         // Input validation
         if (driver == null) {
             throw new IllegalArgumentException("WebDriver cannot be null");
         }
         
+        if (executionContext == null) {
+            throw new IllegalArgumentException("ExecutionContext cannot be null");
+        }
+        
         if (steps == null || steps.isEmpty()) {
             log.warn("No steps provided to execute");
+            eventPublisher.publishScenarioCompleted("No steps to execute");
             return;
         }
         
-        log.info("Starting scenario execution with {} steps", steps.size());
+        String scenarioMessage = String.format("Scenario with %d steps using %s", 
+            steps.size(), executionContext.getStrategy().getStrategyName());
+        log.info("Starting scenario execution with {} steps using strategy: {}", 
+            steps.size(), executionContext.getStrategy().getStrategyName());
+        eventPublisher.publishScenarioStarted(scenarioMessage);
         
-        for (int i = 0; i < steps.size(); i++) {
-            TestStep step = steps.get(i);
-            executeStep(driver, step, i);
+        try {
+            // Use strategy pattern for execution
+            executionContext.execute(driver, steps);
+            
+            log.info("Scenario execution completed successfully");
+            eventPublisher.publishScenarioCompleted("All steps executed successfully");
+            
+        } catch (Exception e) {
+            log.error("Scenario execution failed: {}", e.getMessage());
+            eventPublisher.publishScenarioFailed("Scenario execution failed", e);
+            throw e;
         }
-        
-        log.info("Scenario execution completed successfully");
     }
     
     @SuppressWarnings("unchecked")
@@ -59,6 +91,8 @@ public class ScenarioManager {
         String stepInfo = String.format("Step %d: %s (%s)", stepIndex + 1, stepName, step.getClass().getSimpleName());
         
         log.info("Executing {}", stepInfo);
+        eventPublisher.publishEvent(new TestExecutionEvent(
+            TestExecutionEvent.EventType.STEP_STARTED, step, stepIndex, stepInfo));
         ReportManager.logStep(Status.INFO, "Started: " + stepName, step.toString());
         
         try {
@@ -70,6 +104,8 @@ public class ScenarioManager {
             executor.execute(driver, step);
             
             log.info("Successfully executed {}", stepInfo);
+            eventPublisher.publishEvent(new TestExecutionEvent(
+                TestExecutionEvent.EventType.STEP_COMPLETED, step, stepIndex, "Step executed successfully"));
             ReportManager.logStep(Status.PASS, "Completed: " + stepName, "Step executed successfully");
             
         } catch (NoSuchElementException e) {
@@ -109,6 +145,8 @@ public class ScenarioManager {
         String fullErrorMessage = String.format("Failed to execute %s: %s", stepInfo, errorMessage);
         
         log.error(fullErrorMessage, cause);
+        eventPublisher.publishEvent(new TestExecutionEvent(
+            TestExecutionEvent.EventType.STEP_FAILED, step, stepIndex, errorMessage, cause));
         ReportManager.logStep(Status.FAIL, "FAILED: " + (step.getName() != null ? step.getName() : "Unnamed Step"), 
                              fullErrorMessage + "\nStep details: " + step.toString());
         

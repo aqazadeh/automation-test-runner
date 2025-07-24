@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration debug="false">
+    
+    <!-- Console appender for test output -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>INFO</level>
+        </filter>
+    </appender>
+    
+    <!-- File appender for test logs -->
+    <appender name="TEST_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>target/test-logs/test-execution.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>target/test-logs/test-execution-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <maxFileSize>10MB</maxFileSize>
+            <maxHistory>7</maxHistory>
+            <totalSizeCap>100MB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</pattern>
+        </encoder>
+    </appender>
+    
+    <!-- Performance test specific appender -->
+    <appender name="PERFORMANCE" class="ch.qos.logback.core.FileAppender">
+        <file>target/test-logs/performance.log</file>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} PERF [%thread] %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+    
+    <!-- Logger configurations -->
+    
+    <!-- Root logger - default level -->
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="TEST_FILE"/>
+    </root>
+    
+    <!-- Test framework loggers -->
+    <logger name="runner" level="DEBUG" additivity="false">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="TEST_FILE"/>
+    </logger>
+    
+    <!-- Performance test logger -->
+    <logger name="runner.performance" level="DEBUG" additivity="false">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="PERFORMANCE"/>
+    </logger>
+    
+    <!-- Reduce noise from external libraries -->
+    <logger name="org.springframework" level="WARN"/>
+    <logger name="org.hibernate" level="WARN"/>
+    <logger name="org.apache.http" level="WARN"/>
+    <logger name="org.seleniumhq.selenium" level="WARN"/>
+    <logger name="io.netty" level="WARN"/>
+    <logger name="org.asynchttpclient" level="WARN"/>
+    
+    <!-- JUnit and testing framework logs -->
+    <logger name="org.junit" level="INFO"/>
+    <logger name="org.mockito" level="WARN"/>
+    
+    <!-- Test execution specific loggers -->
+    <logger name="runner.observer" level="DEBUG"/>
+    <logger name="runner.strategy" level="DEBUG"/>
+    <logger name="runner.validation" level="DEBUG"/>
+    <logger name="runner.command" level="DEBUG"/>
+    
+    <!-- Quiet down chatty test libraries -->
+    <logger name="com.aventstack.extentreports" level="WARN"/>
+    
+</configuration>
