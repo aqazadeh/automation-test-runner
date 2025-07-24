@@ -8,6 +8,17 @@ public class NavigateActionExecutor extends ActionExecutor<NavigateActionStep> {
 
     @Override
     public void execute(WebDriver driver, NavigateActionStep step) {
-        driver.get(step.getUrl());
+        // Input validation
+        validateWebDriver(driver);
+        validateStep(step);
+        validateString(step.getUrl(), "URL");
+        
+        // Additional URL validation
+        String url = step.getUrl().trim();
+        if (!url.startsWith("http://") && !url.startsWith("https://") && !url.startsWith("file://")) {
+            throw new IllegalArgumentException("URL must start with http://, https://, or file://. Got: " + url);
+        }
+        
+        driver.get(url);
     }
 }

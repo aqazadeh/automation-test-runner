@@ -1,16 +1,16 @@
 package runner;
 
+import runner.config.TestConfiguration;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class TestRunner {
     public static void main(String[] args) throws Exception {
-        boolean parallelExecution = false;
-        int threadCount = Runtime.getRuntime().availableProcessors();
+        TestConfiguration config = TestConfiguration.getInstance();
         List<String> scenarioPaths = new ArrayList<>();
 
         // Parse command line arguments
@@ -44,10 +44,14 @@ public class TestRunner {
             scenarioPaths.add("scenarios/test1.json");
         }
 
-        // Run tests in parallel or sequentially
+        // Run tests in parallel
+        int threadCount = config.getThreadCount();
         System.out.println("Running tests in parallel with " + threadCount + " threads");
+        System.out.println("Browser: " + config.getBrowserType());
+        System.out.println("Environment: " + config.getEnvironment());
         System.out.println("Scenarios: " + scenarioPaths);
-        ParallelTestRunner runner = new ParallelTestRunner(threadCount, scenarioPaths);
+        
+        ParallelTestRunner runner = new ParallelTestRunner(scenarioPaths);
         runner.runTests();
 
     }

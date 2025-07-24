@@ -13,11 +13,11 @@ public class SendValueActionStep extends TestStep {
     private Target target;
     private String value;
     
-    private void setTarget(Target target) {
+    public void setTarget(Target target) {
         this.target = target;
     }
     
-    private void setValue(String value) {
+    public void setValue(String value) {
         this.value = value;
     }
     

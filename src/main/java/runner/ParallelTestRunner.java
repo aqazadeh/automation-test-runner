@@ -4,10 +4,11 @@ import com.aventstack.extentreports.Status;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
+import runner.config.TestConfiguration;
 import runner.manager.ReportManager;
 import runner.manager.ScenarioManager;
 import runner.model.step.TestStep;
+import runner.util.WebDriverFactory;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -24,10 +25,17 @@ public class ParallelTestRunner {
 
     private final int threadCount;
     private final List<String> scenarioPaths;
-
+    private final TestConfiguration config;
 
     public ParallelTestRunner(int threadCount, List<String> scenarioPaths) {
         this.threadCount = threadCount;
+        this.scenarioPaths = scenarioPaths;
+        this.config = TestConfiguration.getInstance();
+    }
+    
+    public ParallelTestRunner(List<String> scenarioPaths) {
+        this.config = TestConfiguration.getInstance();
+        this.threadCount = config.getThreadCount();
         this.scenarioPaths = scenarioPaths;
     }
 
@@ -83,13 +91,13 @@ public class ParallelTestRunner {
             });
             ReportManager.log(Status.INFO, "Total step count: " + steps.size());
 
-            WebDriver driver = new ChromeDriver();
+            WebDriver driver = WebDriverFactory.createDriverFromConfig();
             ReportManager.setWebDriver(driver);
-            ReportManager.log(Status.INFO, "Starting test case");
+            ReportManager.log(Status.INFO, "Starting test case with " + config.getBrowserType() + " browser");
 
             ScenarioManager.start(driver, steps);
             ReportManager.log(Status.PASS, "Test completed successfully.");
-            driver.quit();
+            WebDriverFactory.quitDriver(driver);
         } catch (Exception e) {
             ReportManager.log(Status.FAIL, "An error occurred during testing: " + e.getMessage());
             throw e;

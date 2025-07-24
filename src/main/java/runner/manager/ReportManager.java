@@ -8,6 +8,7 @@ import com.aventstack.extentreports.reporter.configuration.Theme;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
+import runner.config.TestConfiguration;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,8 +30,14 @@ public class ReportManager {
             createReportDirectory();
 
             // Raporun tarihli formatını oluştur
+            TestConfiguration config = TestConfiguration.getInstance();
+            String reportsDir = config.getReportsDirectory();
+            if (reportsDir == null || reportsDir.trim().isEmpty()) {
+                reportsDir = REPORT_DIRECTORY;
+            }
+            
             String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss"));
-            String reportPath = REPORT_DIRECTORY + "/report_" + timestamp + ".html";
+            String reportPath = reportsDir + "/report_" + timestamp + ".html";
 
             // ExtentReports nesnesini yapılandır
             ExtentSparkReporter reporter = new ExtentSparkReporter(reportPath);
@@ -49,7 +56,13 @@ public class ReportManager {
     }
 
     private static void createReportDirectory() {
-        Path dirPath = Paths.get(REPORT_DIRECTORY);
+        TestConfiguration config = TestConfiguration.getInstance();
+        String reportsDir = config.getReportsDirectory();
+        if (reportsDir == null || reportsDir.trim().isEmpty()) {
+            reportsDir = REPORT_DIRECTORY;
+        }
+        
+        Path dirPath = Paths.get(reportsDir);
         if (!Files.exists(dirPath)) {
             try {
                 Files.createDirectories(dirPath);
@@ -96,7 +109,13 @@ public class ReportManager {
             File source = ts.getScreenshotAs(OutputType.FILE);
 
             // Ekran görüntüsü dizinini oluştur
-            String screenshotDir = REPORT_DIRECTORY + "/screenshots";
+            TestConfiguration config = TestConfiguration.getInstance();
+            String baseReportsDir = config.getReportsDirectory();
+            if (baseReportsDir == null || baseReportsDir.trim().isEmpty()) {
+                baseReportsDir = REPORT_DIRECTORY;
+            }
+            
+            String screenshotDir = baseReportsDir + "/screenshots";
             Path dirPath = Paths.get(screenshotDir);
             if (!Files.exists(dirPath)) {
                 Files.createDirectories(dirPath);
